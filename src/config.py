@@ -3,7 +3,7 @@
 
 class Config(object):
     # Number of results to fetch from API
-    RESULT_COUNT = 20
+    RESULT_COUNT = 9
     # How long to cache results for
     CACHE_MAX_AGE = 20  # seconds
     # Icon
