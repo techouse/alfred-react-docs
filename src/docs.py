@@ -7,6 +7,7 @@ import functools
 import re
 import sys
 from collections import OrderedDict
+from textwrap import wrap
 from urllib import quote_plus
 
 from algoliasearch.search_client import SearchClient
@@ -37,20 +38,40 @@ def handle_result(api_dict):
 
     for key in {"objectID", "hierarchy", "content", "url", "anchor"}:
         if key == "hierarchy":
-            api_dict[key] = OrderedDict(sorted(api_dict[key].items(), reverse=True))
-            for hierarchy_key, hierarchy_value in api_dict[key].items():
-                if hierarchy_value:
-                    result["title"] = hierarchy_value
-                    break
+            if (
+                "type" in api_dict
+                and api_dict["type"] is not None
+                and api_dict["type"].startswith("lvl")
+            ):
+                try:
+                    level = int(api_dict["type"][3:])
+                except ValueError:
+                    level = 0
+                result["title"] = api_dict[key][api_dict["type"]]
+                result["subtitle"] = (
+                    " > ".join(
+                        value
+                        for value in OrderedDict(
+                            sorted(api_dict[key].items(), key=lambda x: x[0])
+                        ).values()
+                        if value is not None
+                    )
+                    if level > 0
+                    else None
+                )
+            else:
+                api_dict[key] = OrderedDict(sorted(api_dict[key].items(), reverse=True))
+                for hierarchy_key, hierarchy_value in api_dict[key].items():
+                    if hierarchy_value:
+                        result["title"] = hierarchy_value
+                        break
         else:
             result[key] = api_dict[key]
 
     return result
 
 
-def search(
-        query=None, limit=Config.RESULT_COUNT
-):
+def search(query=None, limit=Config.RESULT_COUNT):
     if query:
         results = index.search(
             query,
@@ -99,9 +120,12 @@ def main(wf):
 
     # Show results
     if not results:
-        url = "https://www.google.com/search?q={}".format(quote_plus("React JS {}".format(query)))
+        url = "https://www.google.com/search?q={}".format(
+            quote_plus("React JS {}".format(query))
+        )
         wf.add_item(
-            "No matching answers found", "Shall I try and search Google?",
+            "No matching answers found",
+            "Shall I try and search Google?",
             valid=True,
             arg=url,
             copytext=url,
@@ -110,9 +134,21 @@ def main(wf):
         )
 
     for result in results:
+        if "subtitle" in result and result["subtitle"] is not None:
+            subtitle = wrap(result["subtitle"], width=75)[0]
+            if len(result["subtitle"]) > 75:
+                subtitle += "..."
+        elif "content" in result and result["content"] is not None:
+            subtitle = wrap(result["content"], width=75)[0]
+            if len(result["content"]) > 75:
+                subtitle += "..."
+        else:
+            subtitle = ""
+
         wf.add_item(
             uid=result["objectID"],
             title=result["title"],
+            subtitle=subtitle,
             arg=result["url"],
             valid=True,
             largetext=result["title"],
