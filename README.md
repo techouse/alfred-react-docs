@@ -27,5 +27,4 @@ Either press `⌘Y` to Quick Look the result, or press `<enter>` to open it in y
 
 ### Note
 
-Built using [Alfred-Workflow](https://github.com/deanishe/alfred-workflow).
 The lightning fast search is powered by [Algolia](https://www.algolia.com) using the _same_ index as the official [React](https://reactjs.org/docs/getting-started.html) website.
