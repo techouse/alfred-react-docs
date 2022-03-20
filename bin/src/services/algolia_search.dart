@@ -18,7 +18,6 @@ class AlgoliaSearch {
           .setAttributesToRetrieve(SearchResult.attributesToRetrieve)
           .setAttributesToSnippet(SearchResult.attributesToSnippet)
           .setSnippetEllipsisText(SearchResult.snippetEllipsisText)
-          .setDistinct(value: 1)
           .setPage(0)
           .setHitsPerPage(20)
           .getObjects();
