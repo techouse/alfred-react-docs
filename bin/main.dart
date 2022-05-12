@@ -50,7 +50,7 @@ void main(List<String> arguments) async {
     verbose = args['verbose'];
 
     final String queryString =
-        args['query'].replaceAll(RegExp(r'\s+'), ' ').trim();
+        args['query'].replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
 
     if (verbose) stdout.writeln('Query: "$queryString"');
 
