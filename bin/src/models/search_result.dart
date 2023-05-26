@@ -10,7 +10,6 @@ class SearchResult {
     required this.objectID,
     required this.type,
     required this.url,
-    required this.anchor,
     required this.hierarchy,
     this.content,
   });
@@ -18,7 +17,6 @@ class SearchResult {
   final String objectID;
   final String type;
   final String url;
-  final String anchor;
   final SearchResultHierarchy hierarchy;
   final String? content;
 
@@ -33,7 +31,6 @@ class SearchResult {
     'content',
     'type',
     'url',
-    'anchor',
   ];
 
   static const List<String> attributesToSnippet = [

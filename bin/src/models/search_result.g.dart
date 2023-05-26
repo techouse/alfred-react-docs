@@ -10,7 +10,6 @@ SearchResult _$SearchResultFromJson(Map<String, dynamic> json) => SearchResult(
       objectID: json['objectID'] as String,
       type: json['type'] as String,
       url: json['url'] as String,
-      anchor: json['anchor'] as String,
       hierarchy: SearchResultHierarchy.fromJson(
           json['hierarchy'] as Map<String, dynamic>),
       content: json['content'] as String?,
@@ -21,7 +20,6 @@ Map<String, dynamic> _$SearchResultToJson(SearchResult instance) =>
       'objectID': instance.objectID,
       'type': instance.type,
       'url': instance.url,
-      'anchor': instance.anchor,
       'hierarchy': instance.hierarchy.toJson(),
       'content': instance.content,
     };
