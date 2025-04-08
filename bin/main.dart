@@ -1,13 +1,6 @@
 import 'dart:io' show exitCode, stdout;
 
-import 'package:alfred_workflow/alfred_workflow.dart'
-    show
-        AlfredItem,
-        AlfredItemIcon,
-        AlfredItemText,
-        AlfredItems,
-        AlfredUpdater,
-        AlfredWorkflow;
+import 'package:alfred_workflow/alfred_workflow.dart';
 import 'package:algoliasearch/src/model/hit.dart';
 import 'package:algoliasearch/src/model/search_response.dart';
 import 'package:args/args.dart' show ArgParser, ArgResults;
@@ -17,6 +10,7 @@ import 'package:html_unescape/html_unescape.dart';
 import 'src/env/env.dart';
 import 'src/extensions/string_helpers.dart' show StringHelpers;
 import 'src/models/search_result.dart' show SearchResult;
+import 'src/models/user_config_key.dart' show UserConfigKey;
 import 'src/services/algolia_search.dart' show AlgoliaSearch;
 
 part 'main_helpers.dart';
@@ -46,16 +40,51 @@ void main(List<String> arguments) {
 
       _verbose = args['verbose'];
 
-      final String queryString =
-          args['query'].replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
+      final Map<String, AlfredUserConfiguration>? userDefaults =
+          await _workflow.getUserDefaults();
+
+      final AlfredUserConfigurationCheckBox? useFileCache =
+          userDefaults?[UserConfigKey.useFileCache.toString()]
+              as AlfredUserConfigurationCheckBox?;
+
+      final AlfredUserConfigurationNumberSlider? fileCacheMaxEntries =
+          userDefaults?[UserConfigKey.fileCacheMaxEntries.toString()]
+              as AlfredUserConfigurationNumberSlider?;
+
+      final AlfredUserConfigurationCheckBox? useAlfredCache =
+          userDefaults?[UserConfigKey.useAlfredCache.toString()]
+              as AlfredUserConfigurationCheckBox?;
+
+      final AlfredUserConfigurationNumberSlider? cacheTimeToLive =
+          userDefaults?[UserConfigKey.cacheTtl.toString()]
+              as AlfredUserConfigurationNumberSlider?;
+
+      final String queryString = args['query']
+          .replaceAll(RegExp(r'\s+'), ' ')
+          .trim()
+          .split(' ')
+          .join(' ')
+          .trim()
+          .toLowerCase();
 
       if (_verbose) stdout.writeln('Query: "$queryString"');
+
+      if (useAlfredCache?.value ?? false) {
+        _workflow.useAutomaticCache = true;
+      } else if (useFileCache?.value ?? false) {
+        _workflow.maxCacheEntries =
+            fileCacheMaxEntries?.value ?? fileCacheMaxEntries?.defaultValue;
+      }
+
+      _workflow.cacheTimeToLive = cacheTimeToLive?.value;
 
       if (queryString.isEmpty) {
         _showPlaceholder();
       } else {
-        _workflow.cacheKey = queryString;
-        if (await _workflow.getItems() == null) {
+        if (useFileCache?.value ?? false) {
+          _workflow.cacheKey = queryString;
+        }
+        if ((await _workflow.getItems()).isEmpty) {
           await _performSearch(queryString);
         }
       }
