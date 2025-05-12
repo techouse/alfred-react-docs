@@ -21,34 +21,34 @@ packages:
     dependency: transitive
     description:
       name: algolia_client_core
-      sha256: a25fce008f0b20126680d9a3b430a321c2f2a48a46e1eaefa1351f1a8c49d900
+      sha256: "89f9d7037338e503374ab32b0ee5b6bea05261298b88104f826c1a2d27308803"
       url: "https://pub.dev"
     source: hosted
-    version: "1.31.2"
+    version: "1.32.0"
   algolia_client_insights:
     dependency: transitive
     description:
       name: algolia_client_insights
-      sha256: "017faf11e88665a7fe555e7fa994c650e2edc2ec5c866abb29aefb807a5055b8"
+      sha256: a3052c8dc9de8425b432866ecc869bcbe734a6bf7e023806552e30bad392efbe
       url: "https://pub.dev"
     source: hosted
-    version: "1.31.2"
+    version: "1.32.0"
   algolia_client_search:
     dependency: transitive
     description:
       name: algolia_client_search
-      sha256: "7b465824a84fc452e635df8017f1aa147fb458a6c7cababf628600a580d5a72a"
+      sha256: e9c0314e257935b786bad7f02b11e3692ce46f5eacb4f22f7e8202d592b61d9b
       url: "https://pub.dev"
     source: hosted
-    version: "1.31.2"
+    version: "1.32.0"
   algoliasearch:
     dependency: "direct main"
     description:
       name: algoliasearch
-      sha256: "9aec1a48e25feddf7193fc4d36c851844bdb9ebcba8df4eeb8752182cc1355ca"
+      sha256: d4214b52b2dafdee2aa461582269b576c581c6b402e69c535f5df601ba22a126
       url: "https://pub.dev"
     source: hosted
-    version: "1.31.2"
+    version: "1.32.0"
   analyzer:
     dependency: transitive
     description:
