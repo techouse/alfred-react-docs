@@ -22,7 +22,7 @@ jobs:
     env:
       GITHUB_REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
     steps:
-      - uses: dart-lang/setup-dart@v1
+      - uses: dart-lang/setup-dart@v1.7.2
         with:
           sdk: stable
       - id: checkout
