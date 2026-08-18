@@ -1,0 +1,21 @@
+[package]
+name = "alfred_react_docs"
+version = "2.3.0"
+edition = "2024"
+rust-version = "1.88"
+description = "Search the React documentation using Alfred."
+license = "MIT"
+publish = false
+
+[dependencies]
+alfred_workflow_rs = "1.0"
+anyhow = "1.0"
+dotenvy = "0.15"
+html-escape = "0.2.15"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+ureq = { version = "3.4.0", features = ["platform-verifier"] }
+url = "2.5"
+
+[dev-dependencies]
+tempfile = "3.10"
