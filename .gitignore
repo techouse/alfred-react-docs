@@ -1,9 +1,14 @@
-# Files and directories created by pub.
+# Workflow packaging output.
+build/
+
+# Rust build output.
+target/
+
+# Preserve local artifacts from the former Dart build.
 .dart_tool/
 .packages
-
-# Conventional directory for build output.
-build/
+bin/src/env/env.g.dart
+bin/*_cache/
 
 # IDE specific
 .idea/
@@ -11,7 +16,8 @@ build/
 # macOS specific
 .DS_Store
 
-bin/*_cache/
 sign.sh
 
 .env
+prefs.plist
+.history
