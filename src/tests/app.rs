@@ -144,6 +144,38 @@ fn item_rejects_out_of_range_result_type() {
 }
 
 #[test]
+fn hierarchy_level_accepts_only_the_supported_exact_types() -> Result<()> {
+    for (result_type, expected) in [
+        ("content", 0),
+        ("lvl0", 0),
+        ("lvl1", 1),
+        ("lvl2", 2),
+        ("lvl3", 3),
+        ("lvl4", 4),
+        ("lvl5", 5),
+        ("lvl6", 6),
+    ] {
+        assert_eq!(result(result_type).hierarchy_level()?, expected);
+    }
+
+    Ok(())
+}
+
+#[test]
+fn hierarchy_level_rejects_malformed_unknown_and_out_of_range_types() {
+    for result_type in ["lvl", "lvl01", "lvl+1", "lvl7", "heading"] {
+        let error = result(result_type)
+            .hierarchy_level()
+            .expect_err("unsupported result types must be rejected");
+
+        assert_eq!(
+            error.to_string(),
+            format!("invalid Algolia result type: {result_type}")
+        );
+    }
+}
+
+#[test]
 fn google_fallback_encodes_query_and_is_selectable() -> Result<()> {
     let item = google_fallback_item("state hooks")?;
 
