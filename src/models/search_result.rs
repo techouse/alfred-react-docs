@@ -23,18 +23,16 @@ impl SearchResult {
     ///
     /// Content records use the root hierarchy level.
     pub fn hierarchy_level(&self) -> Result<usize> {
-        if self.result_type == "content" {
-            return Ok(0);
+        match self.result_type.as_str() {
+            "content" | "lvl0" => Ok(0),
+            "lvl1" => Ok(1),
+            "lvl2" => Ok(2),
+            "lvl3" => Ok(3),
+            "lvl4" => Ok(4),
+            "lvl5" => Ok(5),
+            "lvl6" => Ok(6),
+            _ => Err(anyhow!("invalid Algolia result type: {}", self.result_type)),
         }
-
-        let level = self
-            .result_type
-            .strip_prefix("lvl")
-            .and_then(|value| value.parse::<usize>().ok())
-            .filter(|level| *level <= 6)
-            .ok_or_else(|| anyhow!("invalid Algolia result type: {}", self.result_type))?;
-
-        Ok(level)
     }
 }
 
