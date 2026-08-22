@@ -61,6 +61,45 @@ fn breadcrumb_excludes_title_and_decodes_html_entities() -> Result<()> {
 }
 
 #[test]
+fn breadcrumb_decodes_semicolonless_entities() -> Result<()> {
+    let mut item_result = result("lvl1");
+    item_result.hierarchy.lvl0 = "React &copy and &#38; Unknown &doesnotexist;".to_owned();
+
+    let items = items_from_results(&[item_result])?;
+
+    assert_eq!(
+        items[0].subtitle(),
+        Some("React © and & Unknown &doesnotexist;")
+    );
+    Ok(())
+}
+
+#[test]
+fn breadcrumb_preserves_dart_incompatible_numeric_entities() -> Result<()> {
+    let mut item_result = result("lvl1");
+    item_result.hierarchy.lvl0 = "React &#38 and &#X26;".to_owned();
+
+    let items = items_from_results(&[item_result])?;
+
+    assert_eq!(items[0].subtitle(), Some("React &#38 and &#X26;"));
+    Ok(())
+}
+
+#[test]
+fn title_remains_encoded_while_breadcrumb_is_decoded() -> Result<()> {
+    let mut item_result = result("lvl1");
+    item_result.hierarchy.lvl1 = Some("Built-in &amp; React Hooks".to_owned());
+
+    let items = items_from_results(&[item_result])?;
+
+    assert_eq!(
+        (items[0].title(), items[0].subtitle()),
+        ("Built-in &amp; React Hooks", Some("React & APIs"))
+    );
+    Ok(())
+}
+
+#[test]
 fn breadcrumb_excludes_repeated_title_values() -> Result<()> {
     let mut search_result = result("lvl2");
     search_result.hierarchy.lvl0 = "Built-in React Hooks".to_owned();
