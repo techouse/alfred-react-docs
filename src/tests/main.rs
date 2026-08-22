@@ -155,6 +155,24 @@ fn file_cache_hit_bypasses_algolia() -> Result<()> {
 }
 
 #[test]
+fn runtime_error_clears_items_and_file_cache_key() -> Result<()> {
+    let mut workflow = Workflow::new();
+    workflow.set_cache_key(Some("state hooks"));
+    workflow.add_item(Item::new("stale result"))?;
+
+    replace_items_with_runtime_error(&mut workflow, &anyhow::anyhow!("search failed"))?;
+
+    assert_eq!(
+        (
+            workflow.cache_key(),
+            workflow.get_items()?.items()[0].title()
+        ),
+        (None, "search failed")
+    );
+    Ok(())
+}
+
+#[test]
 fn no_results_render_google_fallback() -> Result<()> {
     let mut workflow = Workflow::new();
     let cli = Cli {
