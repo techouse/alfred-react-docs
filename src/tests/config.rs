@@ -19,6 +19,47 @@ fn runtime_value_takes_precedence_over_other_sources() -> Result<()> {
 }
 
 #[test]
+fn complete_runtime_configuration_ignores_malformed_dotenv() -> Result<()> {
+    let directory = tempfile::tempdir()?;
+    let dotenv_path = directory.path().join(".env");
+    std::fs::write(&dotenv_path, "BROKEN=\"unterminated\n")?;
+
+    let config = algolia_search_config_from(
+        Ok("runtime-app".to_owned()),
+        Ok("runtime-key".to_owned()),
+        Ok("runtime-index".to_owned()),
+        &dotenv_path,
+    )?;
+
+    assert_eq!(
+        config,
+        AlgoliaSearchConfig {
+            application_id: "runtime-app".to_owned(),
+            api_key: "runtime-key".to_owned(),
+            index_name: "runtime-index".to_owned(),
+        }
+    );
+    Ok(())
+}
+
+#[test]
+fn missing_runtime_configuration_still_reads_dotenv() -> Result<()> {
+    let directory = tempfile::tempdir()?;
+    let dotenv_path = directory.path().join(".env");
+    std::fs::write(&dotenv_path, "ALGOLIA_SEARCH_INDEX=dotenv-index\n")?;
+
+    let config = algolia_search_config_from(
+        Ok("runtime-app".to_owned()),
+        Ok("runtime-key".to_owned()),
+        Err(VarError::NotPresent),
+        &dotenv_path,
+    )?;
+
+    assert_eq!(config.index_name, "dotenv-index");
+    Ok(())
+}
+
+#[test]
 fn dotenv_value_takes_precedence_over_embedded_value() -> Result<()> {
     let value = configuration_value(
         "SETTING",
@@ -56,6 +97,14 @@ fn empty_dotenv_value_is_rejected() {
         Some("embedded"),
     )
     .expect_err("an empty dotenv value must be rejected");
+
+    assert_eq!(error.to_string(), "SETTING must not be empty");
+}
+
+#[test]
+fn empty_embedded_value_is_rejected() {
+    let error = configuration_value("SETTING", Err(VarError::NotPresent), None, Some(""))
+        .expect_err("an empty embedded setting must be rejected");
 
     assert_eq!(error.to_string(), "SETTING must not be empty");
 }
