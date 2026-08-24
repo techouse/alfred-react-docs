@@ -70,6 +70,7 @@ fn replace_items_with_runtime_error(
         eprintln!("failed to clear workflow items: {clear_error}");
     }
     workflow.clear_cache_key();
+    workflow.set_use_automatic_cache(false);
     workflow.add_item(Item::new(error.to_string()))
 }
 

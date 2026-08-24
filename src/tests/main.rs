@@ -173,6 +173,18 @@ fn runtime_error_clears_items_and_file_cache_key() -> Result<()> {
 }
 
 #[test]
+fn runtime_error_does_not_emit_automatic_cache_metadata() -> Result<()> {
+    let mut workflow = Workflow::new();
+    workflow.set_use_automatic_cache(true);
+
+    replace_items_with_runtime_error(&mut workflow, &anyhow::anyhow!("search failed"))?;
+
+    let rendered: serde_json::Value = serde_json::from_str(&workflow.to_json_string()?)?;
+    assert!(rendered.get("cache").is_none());
+    Ok(())
+}
+
+#[test]
 fn no_results_render_google_fallback() -> Result<()> {
     let mut workflow = Workflow::new();
     let cli = Cli {
