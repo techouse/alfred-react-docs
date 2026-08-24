@@ -1,6 +1,6 @@
 [package]
 name = "alfred_react_docs"
-version = "2.3.1"
+version = "2.3.2"
 edition = "2024"
 rust-version = "1.88"
 description = "Search the React documentation using Alfred."
