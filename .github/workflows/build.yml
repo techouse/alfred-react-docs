@@ -106,7 +106,7 @@ jobs:
           (
             cd "$SMOKE_DIR"
             ./workflow -q "hooks" > smoke.json 2> smoke.stderr
-            jq -e '.items | length > 0' smoke.json > /dev/null
+            jq -e '.items[] | select((.uid // "") != "" and ((.arg // "") | startswith("https://react.dev/")))' smoke.json > /dev/null
           )
           test ! -e build/dist/.env
           test ! -e build/dist/query_cache
